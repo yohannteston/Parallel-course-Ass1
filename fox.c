@@ -49,12 +49,12 @@ print(double *M, int size){
 
 /* Fox's algorithm */
 int
-main (char **argv, int argc)
+main (int argc, char** argv)
 {
   int p, sp,k ;
   int coords[2], pos[2], dims[2]={0,0}, periods[2]={0,0};
   int i,j,subrankrow,subrankcol,n,rank;
-  double *myB, *myA, *A, *B, *C, *tmp, *A_tmp, *MA, *MB ;
+  double *myB, *myA, *A, *B, *C, *tmp, *MA, *MB ;
   double timer;
   MPI_Status status;
   MPI_Datatype block;
@@ -66,10 +66,20 @@ main (char **argv, int argc)
   MPI_Comm_size(MPI_COMM_WORLD, &p); /* Get the number of processors */
 
   sp = sqrt (p) ;
-  assert (p == sp*sp) ;
-  //size = atoi (argv[1]) ;
-  size = N ;
-  assert (0 == size % sp);
+  if(p != sp*sp){
+    printf("p must be a perfect square\n");
+    return EXIT_FAILURE;
+  }
+  if(argc != 2){
+    printf("you must specify the size of the matrices\n");
+    return EXIT_FAILURE;
+  }
+  
+  size = atoi(argv[1]);
+  if(size % sp){
+    printf("must be divisible par srqt(p)\n");
+    return EXIT_FAILURE;
+  }
 
   n = size/sp;
 
@@ -105,12 +115,12 @@ main (char **argv, int argc)
       MB = malloc(size*size*sizeof(double));
 
       init(MA, size);
-      printf("Matrix A:\n");
-      print(MA,size);
+      //printf("Matrix A:\n");
+      //print(MA,size);
 
       init(MB, size);
-      printf("Matrix B:\n");
-      print(MB,size);
+      // printf("Matrix B:\n");
+      //print(MB,size);
       // the matrices are created, we send each block to its "owner" using non blocking communication
       for (i = 0; i < sp; i++ )
 	for (j = 0; j < sp; j++ ) {
@@ -125,7 +135,6 @@ main (char **argv, int argc)
     }
   MPI_Recv(myA, n*n, MPI_DOUBLE, 0, 1,  proc_grid, &status );
   MPI_Recv(myB, n*n, MPI_DOUBLE, 0, 2,  proc_grid, &status );
-
   /* everyone has its blocks, the algorithm can start */
   for (k = 0; k < sp; k++)
     {
@@ -134,17 +143,17 @@ main (char **argv, int argc)
       if (m == subrankrow)
 	{
 	  MPI_Bcast (myA, n*n, MPI_DOUBLE, m, proc_row) ;
-	  A_tmp = myA;
+	  tmp = myA;
 	}
       else
 	{
 	  MPI_Bcast (A, n*n, MPI_DOUBLE, m, proc_row) ;
-	  A_tmp = A;
+	  tmp = A;
 	}
       //before the computation, let's start the communication
       MPI_Isend(myB, n*n, MPI_DOUBLE, ((subrankcol+sp-1)%sp), subrankcol+sp*k, proc_col,&request_1);
       MPI_Irecv(B, n*n, MPI_DOUBLE, ((subrankcol+1)%sp), ((subrankcol+1)%sp)+sp*k, proc_col, &request_2);
-      matmult (A_tmp, myB, C, n) ;
+      matmult (tmp, myB, C, n) ;
       MPI_Wait(&request_1, &status);
       MPI_Wait(&request_2, &status);
       // now, we work using the newly received B
@@ -152,7 +161,7 @@ main (char **argv, int argc)
       myB = B;
       B = tmp;		
     }
-
+  //printf("results\n");
   // gathering the results
   MPI_Isend(C, n*n, MPI_DOUBLE, 0, 1, proc_grid, &request_1);
   if (rank == 0)
@@ -160,14 +169,14 @@ main (char **argv, int argc)
       double *MC;
       MC = malloc(size*size*sizeof(double));
 
-      for(i=0; i < size; i++){
+      for(i=0; i < p; i++){
 	MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, proc_grid, &status);
 	MPI_Cart_coords(proc_grid, status.MPI_SOURCE, 2, coords);
 	MPI_Recv(&MC[(coords[0]*size*n)+(coords[1]*n)], 1, block, status.MPI_SOURCE, 1, proc_grid, &status); 
       }
       /* displays the result */
-      printf("Result:\n");
-      print(MC, size);
+      //printf("Result:\n");
+      //print(MC, size);
       printf("\nTime needed: %lf\n",MPI_Wtime()-timer);
       free(MA); free(MB); free(MC);
     }
