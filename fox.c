@@ -20,8 +20,8 @@ matmult ( double  *A, double *B, double *C, int n)
   int i,j,k ;
 
   for (i=0 ; i<n ; i++)
-    for (j=0 ; j<n ; j++)
-      for (k=0 ; k<n ; k++) {
+    for (k=0 ; k<n ; k++)
+      for (j=0 ; j<n ; j++) {
 	C[i*n +j] += A[i*n + k] * B[k*n + j] ;
       }
 }
@@ -115,11 +115,11 @@ main (int argc, char** argv)
       MB = malloc(size*size*sizeof(double));
 
       init(MA, size);
-      //printf("Matrix A:\n");
+      // printf("Matrix A:\n");
       //print(MA,size);
 
       init(MB, size);
-      // printf("Matrix B:\n");
+      //printf("Matrix B:\n");
       //print(MB,size);
       // the matrices are created, we send each block to its "owner" using non blocking communication
       for (i = 0; i < sp; i++ )
@@ -161,7 +161,6 @@ main (int argc, char** argv)
       myB = B;
       B = tmp;		
     }
-  //printf("results\n");
   // gathering the results
   MPI_Isend(C, n*n, MPI_DOUBLE, 0, 1, proc_grid, &request_1);
   if (rank == 0)
@@ -176,7 +175,7 @@ main (int argc, char** argv)
       }
       /* displays the result */
       //printf("Result:\n");
-      //print(MC, size);
+      // print(MC, size);
       printf("\nTime needed: %lf\n",MPI_Wtime()-timer);
       free(MA); free(MB); free(MC);
     }
