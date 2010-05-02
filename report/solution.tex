@@ -1,0 +1,52 @@
+\chapter{Solution method}
+
+\begin{verbatim}
+Initialize MPI
+
+If the matrix is not a perfect square
+    exit
+If the matrix size is not divisible by the number of process
+    exit 
+
+Initialize the different matrix
+
+Initialize the 2D-grid topology
+Create the rows communicators
+Create the columns communicators
+
+If I am the first processor
+    Randomly create A and B
+    Send each block to the good processors
+Fi
+
+Wait to receive the A and B blocks
+
+/*Now we can start the calculus*/
+For each step k
+    m = (i+k) mod sp //where i is the first coordinate of the processor
+                     //and sp is sqrt(p)
+   
+    If we are A(i,m)
+        Broadcast A-block
+    else
+        Wait for the A-block
+    Fi
+
+	 matrix_multiplication(A, B, C)
+
+    Send B-block to the processor ``above'' us (cyclicly)
+Endfor
+
+/*The computation is terminated*/
+Send our C-block
+
+If I am the first processor
+    Gather all block
+Fi
+
+Wait all the processors
+Finalize MPI
+\end{verbatim}
+
+The program take the size of the matrix as an argument.
+Communication are made in a non blocking fashion to increase the speed of the algorithm.

@@ -1,0 +1,17 @@
+\chapter{Problem description}
+
+The goal of this assignement is to implement the multiplication of dense matrix in a parallel distributed memory environment. In the case of the assignement we only consider $n\times n$ matrix. And the matrix will be randomly generated given a size.\\
+
+To realize the multiplication we use a partitionning strategie. Each processor will be responsable of a part (of equal size) from the original matrix. To compute the result, we will use the Fox's algorithm.
+
+For a processor $P^{(s,r)}$ we compute:
+\[C^{(s,r)} = \sum^{\sqrt{p}-1}_{k=0}A^{(s,k)}B^{(k,r)}\]
+
+For each step of $k\ (k=0,\cdots,\sqrt{p}-1)$ we do:
+\begin{enumerate}[1. ]
+  \item Broadcast $A^{(i,m)}$ in each block-row
+  \item Each processor multiply the broadcasted block with their $B$ block
+  \item We shift the $B$ blocks one step cyclicly upwards
+\end{enumerate}
+
+After this step every processor pocess a piece of the $C$ matrix. We send back everything to the root processor to reassemble the $C$ matrix.
