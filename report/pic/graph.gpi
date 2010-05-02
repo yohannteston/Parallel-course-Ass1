@@ -1,0 +1,17 @@
+set title "Speedup with different matrix size and number of processor"
+set ylabel "Speedup"
+set xlabel "Processor"
+set grid
+#set pointsize 2
+#set terminal postscript portrait enhanced
+#set term postscript eps enhanced
+#set output "graph.eps"
+plot "pic/result.dat" index 0:0 using 2:($3/$4) ti "100x100" with linespoints,\
+"pic/result.dat" index 1 using 2:($3/$4) with linespoints ti "200x200",\
+"pic/result.dat" index 2 using 2:($3/$4) with linespoints ti "400x400",\
+"pic/result.dat" index 3 using 2:($3/$4) with linespoints ti "600x600",\
+"pic/result.dat" index 4 using 2:($3/$4) with linespoints ti "800x800",\
+"pic/result.dat" index 5 using 2:($3/$4) with linespoints ti "1000x1000",\
+"pic/result.dat" index 6 using 2:($3/$4) with linespoints ti "1200x1200",\
+"pic/result.dat" index 7 using 2:($3/$4) with linespoints ti "1440x1440"
+
