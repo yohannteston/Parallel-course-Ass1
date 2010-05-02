@@ -9,9 +9,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define N 4
-
-int size ;
 
 /* matrix multiplication */
 void
@@ -53,7 +50,7 @@ main (int argc, char** argv)
 {
   int p, sp,k ;
   int coords[2], pos[2], dims[2]={0,0}, periods[2]={0,0};
-  int i,j,subrankrow,subrankcol,n,rank;
+  int i,j,subrankrow,subrankcol,n,rank, size;
   double *myB, *myA, *A, *B, *C, *tmp, *MA, *MB ;
   double timer;
   MPI_Status status;
@@ -67,17 +64,23 @@ main (int argc, char** argv)
 
   sp = sqrt (p) ;
   if(p != sp*sp){
-    printf("p must be a perfect square\n");
+    if(rank == 0)
+      printf("p (%d) must be a perfect square\n",p);
+    MPI_Finalize() ;
     return EXIT_FAILURE;
   }
   if(argc != 2){
-    printf("you must specify the size of the matrices\n");
+    if(rank == 0)
+      printf("you must specify the size of the matrices\n");
+    MPI_Finalize() ;
     return EXIT_FAILURE;
   }
   
   size = atoi(argv[1]);
   if(size % sp){
-    printf("must be divisible par srqt(p)\n");
+    if(rank == 0)
+      printf("%d must be divisible par srqt(%d)\n",size,p);
+    MPI_Finalize() ;
     return EXIT_FAILURE;
   }
 
