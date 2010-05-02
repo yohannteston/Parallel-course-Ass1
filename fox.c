@@ -9,10 +9,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define N 4
-
-int size ;
-
 /* matrix multiplication */
 void
 matmult ( double  *A, double *B, double *C, int n)
