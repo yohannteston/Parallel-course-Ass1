@@ -172,7 +172,7 @@ main (int argc, char** argv)
       /* displays the result */
       //printf("Result:\n");
       // print(MC, size);
-      printf("\nTime needed: %lf\n",MPI_Wtime()-timer);
+      printf("%lf\n",MPI_Wtime()-timer);
       free(MA); free(MB); free(MC);
     }
 
