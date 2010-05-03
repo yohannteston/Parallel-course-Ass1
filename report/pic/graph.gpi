@@ -1,6 +1,6 @@
-set title "Speedup with different matrix size and number of processor"
+set title "Speedup with different matrix sizes and number of processors"
 set ylabel "Speedup"
-set xlabel "Processor"
+set xlabel "Processors"
 set grid
 #set pointsize 2
 #set terminal postscript portrait enhanced

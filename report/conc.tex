@@ -1,1 +1,12 @@
 \chapter{Conclusion}
+
+In conclusion, the Fox's algorithm does not scale well with small amounts of data. Indeed, the communication overheads become too large compared to the actual computation and performances drop. 
+
+
+Thus, the number of processors used to run this algorithm must be function of the matrices size. We must have enough data to justify the use of the processors. If too many processors are allocated, the performances will be worse that what they would have been with a smaller number of processors, which is obviously a waste. Choosing too few processors will also lead to a performance issue because we could have got the result faster with some more processors.
+
+
+If $p$ is the number of processors and $n$ the size of each block, the following can be stated about this algorithm. The results will be good when $p$ is not too large or $n$ too small. In the case where $p$ is large and $n$ small, the communication time dominates the computation time, leading to bad performances. On the other hand, when $p$ is small and $n$ large, the computation time dominates the communication time, but the speedup will then be bad (close to 1). 
+
+
+So, the balance between the amount of data to treat and the number of processors is important for the performances of this algorithm.

@@ -3,12 +3,12 @@
 \begin{verbatim}
 Initialize MPI
 
-If the matrix is not a perfect square
+If the matrix size is not a perfect square
     exit
-If the matrix size is not divisible by the number of process
+If the matrix size is not divisible by the number of processors
     exit 
 
-Initialize the different matrix
+Initialize the different matrices
 
 Initialize the 2D-grid topology
 Create the rows communicators
@@ -48,5 +48,5 @@ Wait all the processors
 Finalize MPI
 \end{verbatim}
 
-The program take the size of the matrix as an argument.
-Communication are made in a non blocking fashion to increase the speed of the algorithm.
+The program takes the matrix size as an argument.
+Communications are made in a non blocking fashion to increase the speed of the algorithm.

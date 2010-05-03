@@ -27,17 +27,6 @@ init(double *M, int size){
 
 }
 
-/* displays a matrix */
-void
-print(double *M, int size){
-	int i,j;
-	for(i=0;i<size;i++){
-		for(j=0;j<size;j++)
-			printf(" %2f ",M[i*size+j]);
-		printf("\n");
-	} 
-}
-
 /* Fox's algorithm */
 	int
 main (int argc, char** argv)
@@ -121,7 +110,9 @@ main (int argc, char** argv)
 		init(MA, size);
 		init(MB, size);
 
-		// the matrices are created, we send each block to its "owner" using non blocking communication
+		/* the matrices are created, we send each block to 
+		   its "owner" using non blocking communication
+		*/
 		for (i = 0; i < sp; i++ )
 			for (j = 0; j < sp; j++ ) {
 				//the blocks are sent to the corresponding processor  
@@ -130,8 +121,10 @@ main (int argc, char** argv)
 				pos[1] = j ;
 
 				MPI_Cart_rank(proc_grid, pos, &target) ;
-				MPI_Isend(&MA[(i*size*n)+(j*n)], 1, block, target , 1, proc_grid,&request_1);
-				MPI_Isend(&MB[(i*size*n)+(j*n)], 1, block, target , 2, proc_grid,&request_2);
+				MPI_Isend(&MA[(i*size*n)+(j*n)], 1, block, target , 1, 
+						proc_grid,&request_1);
+				MPI_Isend(&MB[(i*size*n)+(j*n)], 1, block, target , 2, 
+						proc_grid,&request_2);
 			}
 	}
 
@@ -156,8 +149,10 @@ main (int argc, char** argv)
 			tmp = A;
 		}
 		//before the computation, let's start the communication
-		MPI_Isend(myB, n*n, MPI_DOUBLE, ((subrankcol+sp-1)%sp), subrankcol+sp*k, proc_col,&request_1);
-		MPI_Irecv(B, n*n, MPI_DOUBLE, ((subrankcol+1)%sp), ((subrankcol+1)%sp)+sp*k, proc_col, &request_2);
+		MPI_Isend(myB, n*n, MPI_DOUBLE, ((subrankcol+sp-1)%sp), 
+			subrankcol+sp*k,proc_col,&request_1);
+		MPI_Irecv(B, n*n, MPI_DOUBLE, ((subrankcol+1)%sp), 
+			((subrankcol+1)%sp)+sp*k, proc_col, &request_2);
 
 		/*Matrix multiplication*/
 		matmult (tmp, myB, C, n) ;
@@ -183,7 +178,8 @@ main (int argc, char** argv)
 			//checks if there is any block available
 			MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, proc_grid, &status);
 			MPI_Cart_coords(proc_grid, status.MPI_SOURCE, 2, coords);
-			MPI_Recv(&MC[(coords[0]*size*n)+(coords[1]*n)], 1, block, status.MPI_SOURCE, 1, proc_grid, &status); 
+			MPI_Recv(&MC[(coords[0]*size*n)+(coords[1]*n)], 1, block, 
+					status.MPI_SOURCE,1, proc_grid, &status); 
 		}
 		/* displays the result */
 		printf("%lf\n",MPI_Wtime()-timer);

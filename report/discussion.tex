@@ -1,0 +1,13 @@
+As we can see on the speedup plot, the results differ a lot depending on the matrices size. Indeed, big matrices have a high speedup, especially for a small number of processors. At the contrary, the speedup of small matrices becomes quickly bad: it can sometimes take more time to run on $p$ processors than on one.
+
+
+For example, the experiments made with $100 \times 100$ matrices clearly show that fact. In this case, the speedup for $p$ processors (with $p > 1$) is always worse than the time required to run the program on one processor. The same thing can be said with $200 \times 200$ matrices, except that the time for 4 processors (and only it) is slightly better than the time for one processor...
+
+
+Globally, the following thing can be noted with the results we have got: the bigger the matrices are, the bigger the speedup is on a small number of processors. Then, things get worse more or less quickly depending on the size of the matrices. The big matrices keep an increasing speedup longer than the smaller ones but the last result is never the best one.
+
+
+This can be explained with the fact that the algorithm requires a lot of communication and each communication has an overhead. Indeed, the more processors are involved, the more blocks are sent and therefore the more important the overhead is. Thus, the time spent doing I/O increases with the number of processors. To keep a good speedup, it is then important to have a data set big enough to make sure the processors are always busy doing some computations and not waiting for the I/O to terminate.
+
+
+That is why the results are bad with small matrices where the small amount of data cannot keep up with the increasing communication overheads as more and more processors are used. For example, $100 \times 100$ matrices are not big enough to justify the use of 4 processors. The biggest matrices tested ($1440 \times 1440$) have enough data to keep a good speedup up to 36 processors. Passed that number, the overhead becomes too important and the speedup starts lowering. 
